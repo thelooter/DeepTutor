@@ -19,6 +19,7 @@ VALID_SOLVE_TOOLS = [
     "rag_naive",
     "rag_hybrid",
     "query_item",
+    "math_solver",
     "none",
     "finish",
 ]

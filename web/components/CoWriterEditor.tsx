@@ -53,7 +53,11 @@ import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
 import { processLatexContent } from "@/lib/latex";
-import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "@/lib/persistence";
+import {
+  loadFromStorage,
+  saveToStorage,
+  STORAGE_KEYS,
+} from "@/lib/persistence";
 import { debounce } from "@/lib/debounce";
 
 interface CoWriterEditorProps {
@@ -76,7 +80,9 @@ export default function CoWriterEditor({
   const isHydrated = useRef(false);
 
   // Initialize with default content (same on server and client)
-  const [content, setContent] = useState(initialValue || DEFAULT_COWRITER_CONTENT);
+  const [content, setContent] = useState(
+    initialValue || DEFAULT_COWRITER_CONTENT,
+  );
 
   // Debounced save for content
   const saveContent = useCallback(
@@ -84,7 +90,7 @@ export default function CoWriterEditor({
       if (!isHydrated.current) return;
       saveToStorage(STORAGE_KEYS.COWRITER_CONTENT, text);
     }, 1000), // 1 second debounce for content to avoid too frequent saves while typing
-    []
+    [],
   );
 
   // Restore persisted content after hydration
@@ -95,10 +101,10 @@ export default function CoWriterEditor({
       isHydrated.current = true;
       return;
     }
-    
+
     const persistedContent = loadFromStorage<string>(
       STORAGE_KEYS.COWRITER_CONTENT,
-      DEFAULT_COWRITER_CONTENT
+      DEFAULT_COWRITER_CONTENT,
     );
     if (persistedContent !== DEFAULT_COWRITER_CONTENT) {
       setContent(persistedContent);
@@ -1876,7 +1882,8 @@ export default function CoWriterEditor({
                             </span>
                           </div>
                           <div className="text-xs text-slate-600 dark:text-slate-400 truncate mb-1">
-                            &quot;{op.input?.original_text?.substring(0, 35)}...&quot;
+                            &quot;{op.input?.original_text?.substring(0, 35)}
+                            ...&quot;
                           </div>
                           <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500">
                             {op.source && (

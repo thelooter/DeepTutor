@@ -31,7 +31,9 @@ export function useGuideSession() {
   const isHydrated = useRef(false);
 
   // Initialize with defaults (same on server and client)
-  const [sessionState, setSessionState] = useState<SessionState>(INITIAL_SESSION_STATE);
+  const [sessionState, setSessionState] = useState<SessionState>(
+    INITIAL_SESSION_STATE,
+  );
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -43,7 +45,7 @@ export function useGuideSession() {
       const toSave = persistState(state, GUIDE_SESSION_EXCLUDE);
       saveToStorage(STORAGE_KEYS.GUIDE_SESSION, toSave);
     }, 500),
-    []
+    [],
   );
 
   const saveChatMessages = useCallback(
@@ -51,7 +53,7 @@ export function useGuideSession() {
       if (!isHydrated.current) return;
       saveToStorage(GUIDE_CHAT_KEY, messages);
     }, 500),
-    []
+    [],
   );
 
   // Restore persisted state after hydration
@@ -60,13 +62,13 @@ export function useGuideSession() {
 
     const persistedSession = loadFromStorage<Partial<SessionState>>(
       STORAGE_KEYS.GUIDE_SESSION,
-      {}
+      {},
     );
     const persistedChat = loadFromStorage<ChatMessage[]>(GUIDE_CHAT_KEY, []);
 
     if (Object.keys(persistedSession).length > 0) {
       setSessionState((prev) =>
-        mergeWithDefaults(persistedSession, prev, GUIDE_SESSION_EXCLUDE)
+        mergeWithDefaults(persistedSession, prev, GUIDE_SESSION_EXCLUDE),
       );
     }
 

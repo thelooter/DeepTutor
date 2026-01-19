@@ -22,9 +22,13 @@ import { LANGUAGE_OPTIONS } from "./constants";
 import { getStorageStats } from "@/lib/persistence";
 
 export default function SettingsPage() {
-  const { uiSettings, updateTheme, updateLanguage, clearAllPersistence } = useGlobal();
+  const { uiSettings, updateTheme, updateLanguage, clearAllPersistence } =
+    useGlobal();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  const [storageStats, setStorageStats] = useState<{ totalSize: number; items: { key: string; size: number }[] } | null>(null);
+  const [storageStats, setStorageStats] = useState<{
+    totalSize: number;
+    items: { key: string; size: number }[];
+  } | null>(null);
 
   // Load storage stats
   useEffect(() => {
@@ -215,7 +219,9 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {uiSettings.language === "zh" ? "确认清除" : "Confirm Clear"}
+                    {uiSettings.language === "zh"
+                      ? "确认清除"
+                      : "Confirm Clear"}
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     {uiSettings.language === "zh"

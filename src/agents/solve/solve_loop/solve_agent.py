@@ -29,6 +29,7 @@ class SolveAgent(BaseAgent):
         "rag_hybrid",
         "web_search",
         "code_execution",
+        "math_solver",
         "finish",
     }
 

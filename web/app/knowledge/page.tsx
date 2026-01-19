@@ -744,7 +744,6 @@ export default function KnowledgePage() {
     });
 
     kbsNamesRef.current = kbs.map((kb) => kb.name);
-     
   }, [kbs, loading]);
 
   // Cleanup all connections on component unmount

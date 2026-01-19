@@ -27,6 +27,10 @@ tools:
   query_item:
     enabled: true
     max_results: 5
+  math_solver:
+    enabled: true
+    timeout: 30
+    workspace: ./data/user/math_solver_workspace
 logging:
   # Global log level for the entire system (DEBUG, INFO, WARNING, ERROR)
   # This controls both DeepTutor logs and RAG module logs
@@ -59,6 +63,7 @@ solve:
     - "rag_hybrid"
     - "web_search"
     - "query_item"
+    - "math_solver"
     - "none"
   agents:
     investigate_agent:

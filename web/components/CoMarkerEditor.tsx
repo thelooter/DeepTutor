@@ -1831,7 +1831,8 @@ export default function CoWriterEditor({
                             </span>
                           </div>
                           <div className="text-xs text-slate-600 truncate mb-1">
-                            &quot;{op.input?.original_text?.substring(0, 35)}...&quot;
+                            &quot;{op.input?.original_text?.substring(0, 35)}
+                            ...&quot;
                           </div>
                           <div className="flex items-center gap-2 text-[10px] text-slate-400">
                             {op.source && (

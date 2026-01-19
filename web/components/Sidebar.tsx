@@ -93,7 +93,7 @@ export default function Sidebar() {
           icon: ALL_NAV_ITEMS[href].icon,
         }));
     };
-    
+
     return [
       {
         id: "start" as const,

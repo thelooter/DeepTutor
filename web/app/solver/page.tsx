@@ -54,7 +54,8 @@ const resolveArtifactUrl = (url?: string | null, outputDir?: string) => {
 };
 
 export default function SolverPage() {
-  const { solverState, setSolverState, startSolver, newSolverSession } = useGlobal();
+  const { solverState, setSolverState, startSolver, newSolverSession } =
+    useGlobal();
 
   // Local state for input
   const [inputQuestion, setInputQuestion] = useState("");
