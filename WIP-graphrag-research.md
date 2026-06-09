@@ -252,6 +252,89 @@ it already half-owns (§5).
 
 ---
 
+## 7. Addendum — does a PROPER ONTOLOGY (not schema-free) change the verdict?
+
+Follow-up question: the thing DeepTutor tried was *schema-free* GraphRAG. Would the
+verdict change with a **predefined ontology** for the common STEM domains (math, CS,
+biology, chemistry, EE)? Evaluated on merits (setting aside "it existed in the repo before").
+
+**Short answer: it flips ONE of the three original blockers, but the user's specific
+framing contains a trap.** Net: pursue a *thin custom learner-schema*, not heavyweight
+predefined domain ontologies.
+
+### What genuinely changes — the weak-model blocker is largely defused
+My §4 "killer constraint" was that strict triple extraction collapses on local models.
+A **closed entity/relation type set + constrained decoding** directly attacks that:
+- Closed-set extraction is a *classification-shaped* task; JSON/format constraints help
+  (or don't hurt) classification, even though they cost 10-30% on free *reasoning*
+  (Tam et al., arXiv 2408.02442) `[measured]`. Architectural rule: **reason free, emit constrained.**
+- Open-IE on small models is near-garbage (GPT-3.5 ~20 F1 with open guidelines), but
+  **schema-driven small models beat far larger generative LLMs**: GLiNER-L (304M) 60.9 F1
+  vs ChatGPT 47.5; GLiNER-medium (90M) ≈ UniNER-13B at 140× smaller; GoLLIE-7B beats
+  175B-class; GLiNER-BioMed +11.2 over UniNER-7B `[measured]`.
+- Schema-constrained Mistral-7B beat its own schema-free self: SciERC 0.73 vs 0.58,
+  WebNLG 0.74 vs 0.68 `[measured]` (arXiv 2412.20942).
+- Constrained decoding drops malformed output ~32%→~0.4% `[blog]`.
+
+→ So "graph extraction is fragile on DeepTutor's local fleet" is **no longer a hard
+blocker** *if* extraction is ontology-constrained. This is the real, defensible win.
+
+### The trap: the named domains' mature ontologies are the WRONG ones
+"Proper ontology for math/CS/bio/chem/EE" sounds like "adopt GO, ChEBI, MSC." Don't:
+- **GO (44,945 terms), ChEBI (180k classes), OBO** are *research-curation* ontologies
+  (gene function, molecule taxonomy) — explicitly **not teaching tools**, wrong
+  granularity for a student `[measured]`. Forcing tutor content into GO is a category error.
+- **MSC / OMDoc / OpenMath**: library-classification codes or formal-proof markup, not
+  concept graphs.
+- **Physics and EE: no usable concept ontology exists** `[measured: absence]`.
+- Only **CSO** (14k topics, CC BY 4.0) and **OntoMathPRO / OntoMath^Edu** are genuinely
+  concept-level — and even CSO is a research-*topic* taxonomy, not a learner-prerequisite graph.
+
+### What does NOT change (ontology doesn't fix these)
+- **RAG accuracy**: ontology-grounded RAG *ties* schema-free GraphRAG (~90% vs 90%; vector
+  RAG 60%) — its edge is **faithfulness/interpretability/auditability (~35% fewer
+  hallucinated relations), not accuracy** (arXiv 2511.05991) `[measured]`. And the ontology
+  KG **without attached chunks** collapses to 15-20% — the skeleton needs the text.
+- **Re-index churn** on user-mutating KBs — unchanged.
+- **Open-domain coverage** — *worsened in a sense*: the same constraint that rescues small
+  models **silently discards out-of-domain uploads** (history book, niche subfield, company
+  docs). Forces a **domain-classification router + schema-free fallback** path. NEL also
+  fails precisely on unlinkable/NIL mentions, i.e. the open-domain case `[measured]`.
+- **Maintenance/drift** — ACM CCS frozen since 2012 is the cautionary tale.
+
+### Revised posture
+A predefined ontology changes the verdict **only on weak-model extraction reliability and
+tutoring faithfulness in covered domains** — not on RAG accuracy, churn, or open-domain
+coverage. Therefore:
+- ✅ Use a **thin, custom, learner-oriented closed schema** — entity types like
+  `Concept / Definition / Theorem / Algorithm / Example`; relations like
+  `prerequisiteOf / partOf / uses / instanceOf` — with **constrained decoding**. This
+  captures the small-model rescue AND the prerequisite-sequencing learning win (KnowEdu:
+  prerequisite-order study → better student success; AUC 0.95) `[measured]` at low authoring cost.
+- ✅ Adopt **CSO + OntoMathPRO** as *seed vocabularies / entity-linking targets*, not as
+  extraction straitjackets.
+- ❌ Do **not** adopt GO/ChEBI/MSC wholesale (granularity mismatch); don't expect an
+  ontology to beat schema-free GraphRAG on accuracy; don't apply constraints to reasoning steps.
+- ⚙️ Mandatory architecture: **constrained extraction + free reasoning**, plus
+  **domain router → schema-free fallback** for arbitrary uploads.
+
+This actually *strengthens* the §6 recommendation: the Phase-2 per-KB concept graph should
+be built with a **thin closed learner-schema + constrained decoding**, which is exactly the
+form that both rescues local-model extraction and yields the pedagogical prerequisite graph.
+The "full predefined domain ontology" framing is the wrong lever; "thin custom schema" is
+the right one.
+
+#### Addendum sources
+- Constraint vs reasoning dichotomy: https://arxiv.org/pdf/2408.02442
+- Schema-driven small models: https://aclanthology.org/2024.naacl-long.300.pdf · https://arxiv.org/pdf/2310.03668 · https://arxiv.org/pdf/2504.00676
+- Schema vs schema-free F1: https://arxiv.org/html/2412.20942v1
+- Ontology-grounded RAG (ties GraphRAG, needs chunks): https://arxiv.org/html/2511.05991v1
+- STEM ontology landscape: https://direct.mit.edu/dint/article/2/3/379/94891 (CSO) · http://ontomathpro.org/ · https://en.wikipedia.org/wiki/Gene_Ontology · https://www.ebi.ac.uk/chebi/
+- Tutoring prerequisite outcomes (KnowEdu): https://www.researchgate.net/publication/325303797
+- NEL failure on NIL/partial KB: https://arxiv.org/pdf/2303.10330
+
+---
+
 ## Appendix A — key file references
 - RAG facade / factory: `deeptutor/services/rag/service.py`, `…/rag/factory.py`
 - Pipeline / chunking / fusion: `…/pipelines/llamaindex/{pipeline,ingestion,retrievers}.py`
