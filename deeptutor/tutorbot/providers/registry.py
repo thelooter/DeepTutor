@@ -61,6 +61,12 @@ class ProviderSpec:
     # Provider supports cache_control on content blocks (e.g. Anthropic prompt caching)
     supports_prompt_caching: bool = False
 
+    # Substring patterns (case-insensitive) marking models whose native reasoning
+    # trace should be surfaced. When the caller passes no explicit reasoning_effort,
+    # the provider auto-injects "high" so thinking is enabled (e.g. routing
+    # "deepseek/deepseek-v4-pro" through the OpenRouter gateway).
+    reasoning_model_patterns: tuple[str, ...] = ()
+
     @property
     def mode(self) -> str:
         if self.is_oauth:
@@ -120,6 +126,11 @@ PROVIDERS: tuple[ProviderSpec, ...] = (
         detect_by_base_keyword="openrouter",
         default_api_base="https://openrouter.ai/api/v1",
         supports_prompt_caching=True,
+        # OpenRouter prefixes models with the upstream vendor (e.g.
+        # "deepseek/deepseek-v4-pro"); match the reasoning variants so the
+        # gateway auto-enables thinking. OpenRouter normalizes top-level
+        # reasoning_effort itself, so no extra_body thinking flag is sent here.
+        reasoning_model_patterns=("deepseek-v4-pro", "deepseek-reasoner"),
     ),
     ProviderSpec(
         name="aihubmix",
@@ -228,6 +239,7 @@ PROVIDERS: tuple[ProviderSpec, ...] = (
         display_name="DeepSeek",
         backend="openai_compat",
         default_api_base="https://api.deepseek.com",
+        reasoning_model_patterns=("deepseek-v4-pro", "deepseek-reasoner"),
     ),
     ProviderSpec(
         name="gemini",

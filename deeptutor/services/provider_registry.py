@@ -144,6 +144,12 @@ PROVIDERS: tuple[ProviderSpec, ...] = (
         detect_by_base_keyword="openrouter",
         default_api_base="https://openrouter.ai/api/v1",
         supports_prompt_caching=True,
+        # OpenRouter prefixes models with the upstream vendor (e.g.
+        # "deepseek/deepseek-v4-pro"); match the reasoning variants so the
+        # gateway auto-injects reasoning_effort the same way the native
+        # provider specs do. OpenRouter normalizes top-level reasoning_effort
+        # itself, so no thinking_style extra_body is needed here.
+        reasoning_model_patterns=("deepseek-v4-pro", "deepseek-reasoner"),
     ),
     ProviderSpec(
         name="aihubmix",
